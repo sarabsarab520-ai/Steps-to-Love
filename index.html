@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>قصة تفاعلية كرتونية</title>
+<style>
+  body {
+    margin: 0;
+    background-color: #cce7ff;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    direction: rtl;
+  }
+  #scene {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+  .character {
+    position: absolute;
+    width: 120px;
+    transition: all 1s ease;
+  }
+  .girl { bottom: 50px; left: 50px; }
+  .boy { bottom: 50px; left: -150px; }
+  .cloud { position: absolute; width: 200px; top: 30px; left: 50px; opacity: 1; transition: opacity 2s ease; }
+  .flowers { position: absolute; width: 100px; bottom: 0; opacity: 0; }
+  #textbox {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    display: none;
+  }
+  .btn {
+    display: inline-block;
+    background: #ff99cc;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <img src="girl.png" class="character girl" id="girl">
+  <img src="boy.png" class="character boy" id="boy">
+  <img src="cloud.png" class="cloud" id="cloud">
+  <img src="flowers.png" class="flowers" id="flowers">
+  <div id="textbox"></div>
+</div>
+
+<audio id="steps" src="steps.mp3"></audio>
+<audio id="magic" src="magic.mp3"></audio>
+<audio id="hug" src="hug.mp3"></audio>
+
+<script>
+const girl = document.getElementById('girl');
+const boy = document.getElementById('boy');
+const cloud = document.getElementById('cloud');
+const flowers = document.getElementById('flowers');
+const textbox = document.getElementById('textbox');
+
+const steps = document.getElementById('steps');
+const magic = document.getElementById('magic');
+const hug = document.getElementById('hug');
+
+function showText(message, buttons = []) {
+  textbox.innerHTML = message;
+  textbox.style.display = 'block';
+  if(buttons.length > 0){
+    buttons.forEach(btn => {
+      const b = document.createElement('button');
+      b.className = 'btn';
+      b.innerText = btn.text;
+      b.onclick = btn.action;
+      textbox.appendChild(b);
+    });
+  }
+}
+
+function startStory() {
+  // المرحلة 1: الفتاة حزينة
+  showText('الفتاة جالسة وحيدة وتبدو حزينة...');
+  
+  setTimeout(() => {
+    // المرحلة 2: ظهور الفتى
+    boy.style.left = '200px';
+    magic.play();
+    cloud.style.opacity = '0';
+    
+    setTimeout(() => {
+      showText('اتبع الفتى', [{
+        text: 'تمشي خلفه',
+        action: followBoy
+      }]);
+    }, 1500);
+  }, 2000);
+}
+
+function followBoy() {
+  textbox.style.display = 'none';
+  let girlPos = 50;
+  let boyPos = 200;
+  
+  // المشي مع الفتى
+  const walkInterval = setInterval(() => {
+    girlPos += 5;
+    girl.style.left = girlPos + 'px';
+    flowers.style.opacity = '1';
+    if(girlPos >= 180) {
+      clearInterval(walkInterval);
+      showText('عناق كبير', [{
+        text: 'اعانقه',
+        action: hugScene
+      }]);
+    }
+  }, 300);
+  steps.play();
+}
+
+function hugScene() {
+  textbox.style.display = 'none';
+  hug.play();
+  // تحريك الشخصين قليلاً
+  girl.style.bottom = '70px';
+  boy.style.bottom = '70px';
+  
+  setTimeout(() => {
+    showText('هل تحبني؟', [
+      {text: 'أنا أحبك', action: loveResponse},
+      {text: 'أنا أحبك كثير', action: loveResponse}
+    ]);
+  }, 1000);
+}
+
+function loveResponse() {
+  textbox.style.display = 'none';
+  showText('أنا أحبك أكثر، واخترتك لتكون عيد حبي اليوم.. لك حبي وإخلاصي');
+}
+
+// بدء القصة
+startStory();
+</script>
+
+</body>
+</html>
